@@ -29,7 +29,19 @@ navigator.geolocation.getCurrentPosition(
       const lat = mapEvent.latlng.lat;
       const lng = mapEvent.latlng.lng;
 
-      L.marker([lat, lng]).addTo(map).bindPopup("Workout").openPopup();
+      L.marker([lat, lng])
+        .addTo(map)
+        .bindPopup(
+          L.popup({
+            maxWidth: 250,
+            minWidth: 100,
+            autoClose: false,
+            closeOnClick: false,
+            className: "running-popup",
+          })
+        )
+        .setPopupContent("Workout")
+        .openPopup();
     });
 
     L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
