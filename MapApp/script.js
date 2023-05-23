@@ -11,8 +11,22 @@ const inputDuration = document.querySelector(".form__input--duration");
 const inputCadence = document.querySelector(".form__input--cadence");
 const inputElevation = document.querySelector(".form__input--elevation");
 
+//Task 3.2 Declare map and mapEvent as global variables
 let map;
-let mapEvent; //make global variables
+let mapEvent;
+
+//Task 4.1 - create the classes
+///// CLASSES ////
+class Workout {
+  // date = Date();
+  // id = (Date.now() + "").slice(-10);
+
+  constructor(coords, distance, duration) {
+    this.coords = coords; // [lat, lng]
+    this.distance = distance; // in kms
+    this.duration = duration; //in mins
+  }
+}
 
 navigator.geolocation.getCurrentPosition(
   function (position) {
@@ -25,11 +39,12 @@ navigator.geolocation.getCurrentPosition(
 
     map = L.map("map").setView(coords, 13);
 
-    // console.log(map); //Task 2.1
+    // console.log(map);
 
     map.on("click", function (mapE) {
-      mapEvent = mapE;
+      mapEvent = mapE; // Task 3.2 - assign the mapE local variable to the global MapEvent variable
 
+      // Task 3.1 - Display user input form on the left of the screen
       form.classList.remove("hidden");
       inputDistance.focus();
     });
@@ -38,11 +53,6 @@ navigator.geolocation.getCurrentPosition(
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
-
-    // L.marker(coords)
-    //   .addTo(map)
-    //   .bindPopup("A pretty CSS popup.<br> Easily customizable.")
-    //   .openPopup();
   },
   function () {
     alert("Could not get position.");
@@ -51,14 +61,13 @@ navigator.geolocation.getCurrentPosition(
 
 // form event listener to check if submitted/completed
 form.addEventListener("submit", function (e) {
-  e.preventDefault(); // stop refreshing the page on submit
+  e.preventDefault(); //Task 3.3 prevent page reload on submit.
 
-  //get user click location on map
   console.log(mapEvent);
   const lat = mapEvent.latlng.lat;
   const lng = mapEvent.latlng.lng;
 
-  L.marker([lat, lng]) //create pop-up marker after user hits submit.
+  L.marker([lat, lng]) // Task 3.3 display map marker whenever form is submitted.
     .addTo(map)
     .bindPopup(
       L.popup({
@@ -72,5 +81,11 @@ form.addEventListener("submit", function (e) {
     .setPopupContent("Workout")
     .openPopup();
 
-  form.reset();
+  form.reset(); // Task 3.3 challenge - set input boxes back to default
+});
+
+//Task 3.4 - Event Listener Toggle form input type change.
+inputType.addEventListener("change", function () {
+  inputCadence.closest(".form__row").classList.toggle("form__row--hidden");
+  inputElevation.closest(".form__row").classList.toggle("form__row--hidden");
 });
