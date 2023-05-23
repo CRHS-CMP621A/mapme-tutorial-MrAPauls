@@ -14,6 +14,7 @@ const inputElevation = document.querySelector(".form__input--elevation");
 //Task 3.2 Declare map and mapEvent as global variables
 let map;
 let mapEvent;
+let workouts = [];
 
 //Task 4.1 - create the classes
 ///// CLASSES ////
@@ -83,11 +84,37 @@ navigator.geolocation.getCurrentPosition(
 form.addEventListener("submit", function (e) {
   e.preventDefault(); //Task 3.3 prevent page reload on submit.
 
-  console.log(mapEvent);
+  //Task 4.4 - get data from form and map.on
+  const type = inputType.value;
+  const distance = Number(inputDistance.value);
+  const duration = Number(inputDuration.value);
   const lat = mapEvent.latlng.lat;
   const lng = mapEvent.latlng.lng;
+  let workout;
 
-  L.marker([lat, lng]) // Task 3.3 display map marker whenever form is submitted.
+  //Task 4.4 continued
+  if (type === "running") {
+    const cadence = Number(inputCadence.value);
+
+    //validate form data later
+
+    //create new Running Object
+    workout = new Running([lat, lng], distance, duration, cadence);
+  }
+
+  if (type === "cycling") {
+    const elevation = +inputElevation.value;
+
+    //Create new Cycling object
+    workout = new Cycling([lat, lng], distance, duration, elevation);
+  }
+
+  workouts.push(workout); // add latest workout to array
+  //debug
+  console.log(workouts);
+
+  // Task 3.3 display map marker whenever form is submitted.
+  L.marker([lat, lng])
     .addTo(map)
     .bindPopup(
       L.popup({
