@@ -18,8 +18,8 @@ let mapEvent;
 //Task 4.1 - create the classes
 ///// CLASSES ////
 class Workout {
-  // date = Date();
-  // id = (Date.now() + "").slice(-10);
+  date = Date();
+  id = (Date.now() + "").slice(-10);
 
   constructor(coords, distance, duration) {
     this.coords = coords; // [lat, lng]
@@ -27,6 +27,26 @@ class Workout {
     this.duration = duration; //in mins
   }
 }
+
+//Task 4.2 - children of workout class
+class Running extends Workout {
+  constructor(coords, distance, duration, cadence) {
+    super(coords, distance, duration); // from Workout class
+    this.cadence = cadence;
+  }
+}
+
+class Cycling extends Workout {
+  constructor(coords, distance, duration, elevationGain) {
+    super(coords, distance, duration); // from Workout class
+    this.elevation = elevationGain;
+  }
+}
+
+//Task 4.3  Testing Workout classes
+const run1 = new Running([39, -12], 5.2, 24, 178);
+const cycling1 = new Cycling([39, -12], 27, 95, 523);
+console.log(run1, cycling1);
 
 navigator.geolocation.getCurrentPosition(
   function (position) {
