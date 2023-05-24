@@ -220,3 +220,20 @@ inputType.addEventListener("change", function () {
   inputCadence.closest(".form__row").classList.toggle("form__row--hidden");
   inputElevation.closest(".form__row").classList.toggle("form__row--hidden");
 });
+
+//Task 6 - Move map to focus on selected workout
+containerWorkouts.addEventListener("click", function (e) {
+  const workoutEl = e.target.closest(".workout");
+
+  // not in google doc instructions
+  if (!workoutEl) return;
+
+  const workout = workouts.find((work) => work.id === workoutEl.dataset.id);
+  console.log(workout);
+  map.setView(workout.coords, 13, {
+    animate: true,
+    pan: {
+      duration: 1,
+    },
+  });
+});
