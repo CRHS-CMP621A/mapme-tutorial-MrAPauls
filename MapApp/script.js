@@ -19,7 +19,7 @@ let workouts = [];
 //Task 4.1 - create the classes
 ///// CLASSES ////
 class Workout {
-  date = Date();
+  date = new Date();
   id = (Date.now() + "").slice(-10);
 
   constructor(coords, distance, duration) {
@@ -31,16 +31,45 @@ class Workout {
 
 //Task 4.2 - children of workout class
 class Running extends Workout {
+  type = "Running";
+
   constructor(coords, distance, duration, cadence) {
     super(coords, distance, duration); // from Workout class
     this.cadence = cadence;
+    this.calcPace(); //calculates the pace
+    this.setDescription(); //sets the description for the workout title
+  }
+
+  //methods
+  calcPace() {
+    //min / km
+    this.pace = this.duration / this.distance;
+    return this.pace;
+  }
+
+  setDescription() {
+    // Running on ___date____
+    this.description = `${this.type} on ${this.date.toDateString()}`;
   }
 }
 
 class Cycling extends Workout {
+  type = "Cycling";
   constructor(coords, distance, duration, elevationGain) {
     super(coords, distance, duration); // from Workout class
     this.elevation = elevationGain;
+    this.calcSpeed();
+    this.setDescription();
+  }
+
+  calcSpeed() {
+    this.speed = this.distance / (this.duration / 60);
+    return this.speed;
+  }
+
+  setDescription() {
+    // Cycling on ___date____
+    this.description = `${this.type} on ${this.date.toDateString()}`;
   }
 }
 
@@ -54,13 +83,9 @@ navigator.geolocation.getCurrentPosition(
     // console.log(position);
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
-    console.log(latitude, longitude);
-    // console.log(`https://www.google.com/maps/@${latitude},${longitude},15z`);
     const coords = [latitude, longitude];
 
     map = L.map("map").setView(coords, 13);
-
-    // console.log(map);
 
     map.on("click", function (mapE) {
       mapEvent = mapE; // Task 3.2 - assign the mapE local variable to the global MapEvent variable
@@ -116,53 +141,59 @@ form.addEventListener("submit", function (e) {
   //Task 5.1 - render/display the workout on the sidebar
 
   //// Render workout in sidebar for user ////
-  let html = `<li class="workout workout--running" data-id="1234567890">
-                <h2 class="workout__title">Running on April 14</h2>
+
+  // let d = new Date();
+  let html;
+
+  if (type === "running") {
+    html = `<li class="workout workout--running" data-id=${workout.id}>
+                <h2 class="workout__title">${workout.description}</h2>
                 <div class="workout__details">
                   <span class="workout__icon">🏃‍♂️</span>
-                  <span class="workout__value">5.2</span>
+                  <span class="workout__value">${workout.distance}</span>
                   <span class="workout__unit">km</span>
                 </div>
                 <div class="workout__details">
                   <span class="workout__icon">⏱</span>
-                  <span class="workout__value">24</span>
+                  <span class="workout__value">${workout.duration}</span>
                   <span class="workout__unit">min</span>
                 </div>
                 <div class="workout__details">
                   <span class="workout__icon">⚡️</span>
-                  <span class="workout__value">4.6</span>
+                  <span class="workout__value">${workout.pace}</span>
                   <span class="workout__unit">min/km</span>
                 </div>
                 <div class="workout__details">
                   <span class="workout__icon">🦶🏼</span>
-                  <span class="workout__value">178</span>
+                  <span class="workout__value">${workout.cadence}</span>
                   <span class="workout__unit">spm</span>
                 </div>
               </li>`;
-
-  html += `<li class="workout workout--cycling" data-id="1234567891">
-            <h2 class="workout__title">Cycling on April 5</h2>
+  } else if (type === "cycling") {
+    html = `<li class="workout workout--cycling" data-id=${workout.id}>
+            <h2 class="workout__title">${workout.description}</h2>
             <div class="workout__details">
               <span class="workout__icon">🚴‍♀️</span>
-              <span class="workout__value">27</span>
+              <span class="workout__value">${workout.distance}</span>
               <span class="workout__unit">km</span>
             </div>
             <div class="workout__details">
               <span class="workout__icon">⏱</span>
-              <span class="workout__value">95</span>
+              <span class="workout__value">${workout.duration}</span>
               <span class="workout__unit">min</span>
             </div>
             <div class="workout__details">
               <span class="workout__icon">⚡️</span>
-              <span class="workout__value">16</span>
+              <span class="workout__value">${workout.speed}</span>
               <span class="workout__unit">km/h</span>
             </div>
             <div class="workout__details">
               <span class="workout__icon">⛰</span>
-              <span class="workout__value">223</span>
+              <span class="workout__value">${workout.elevation}</span>
               <span class="workout__unit">m</span>
             </div>
           </li>`;
+  }
 
   form.insertAdjacentHTML("afterend", html);
 
