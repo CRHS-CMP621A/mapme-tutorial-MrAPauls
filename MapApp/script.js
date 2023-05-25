@@ -138,6 +138,9 @@ form.addEventListener("submit", function (e) {
   //Testing 4.4
   console.log(workouts);
 
+  //Task 7.1 Local Storage of Workouts Array
+  localStorage.setItem("workouts", JSON.stringify(workouts));
+
   //Task 5.1 - render/display the workout on the sidebar
 
   //// Render workout in sidebar for user ////
@@ -213,6 +216,7 @@ form.addEventListener("submit", function (e) {
     .openPopup();
 
   form.reset(); // Task 3.3 challenge - set input boxes back to default
+  form.classList.add("hidden");
 });
 
 //Task 3.4 - Event Listener Toggle form input type change.
@@ -223,14 +227,14 @@ inputType.addEventListener("change", function () {
 
 //Task 6 - Move map to focus on selected workout
 containerWorkouts.addEventListener("click", function (e) {
-  const workoutEl = e.target.closest(".workout");
+  const workoutEl = e.target.closest(".workout"); // This selects the Workout (class .workout created on submit)
 
-  // not in google doc instructions
-  if (!workoutEl) return;
+  if (!workoutEl) return; // if workout not found then return out of this function
 
   const workout = workouts.find((work) => work.id === workoutEl.dataset.id);
-  console.log(workout);
+
   map.setView(workout.coords, 13, {
+    //set the Map View to the location of the workout coordinates
     animate: true,
     pan: {
       duration: 1,
