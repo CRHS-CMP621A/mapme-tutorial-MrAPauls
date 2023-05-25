@@ -44,6 +44,7 @@ class Running extends Workout {
   calcPace() {
     //min / km
     this.pace = this.duration / this.distance;
+    this.pace = this.pace.toFixed(1);
     return this.pace;
   }
 
@@ -64,6 +65,7 @@ class Cycling extends Workout {
 
   calcSpeed() {
     this.speed = this.distance / (this.duration / 60);
+    this.speed = this.speed.toFixed(1);
     return this.speed;
   }
 
@@ -99,6 +101,74 @@ navigator.geolocation.getCurrentPosition(
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
+
+    //Task 7.2 Load Existing Workouts from Local Storage
+    const data = JSON.parse(localStorage.getItem("workouts"));
+
+    //check if there is any data already stored
+    if (data) {
+      workouts = data; //load data into Workouts array
+      console.log(data);
+    }
+
+    //Task 7.3 - Render each workout to the Sidebar
+    //// Render workout in sidebar for user ////
+    let html;
+    for (let workout of workouts) {
+      // let d = new Date();
+
+      if (workout.type === "Running") {
+        html = `<li class="workout workout--running" data-id=${workout.id}>
+                <h2 class="workout__title">${workout.description}</h2>
+                <div class="workout__details">
+                  <span class="workout__icon">🏃‍♂️</span>
+                  <span class="workout__value">${workout.distance}</span>
+                  <span class="workout__unit">km</span>
+                </div>
+                <div class="workout__details">
+                  <span class="workout__icon">⏱</span>
+                  <span class="workout__value">${workout.duration}</span>
+                  <span class="workout__unit">min</span>
+                </div>
+                <div class="workout__details">
+                  <span class="workout__icon">⚡️</span>
+                  <span class="workout__value">${workout.pace}</span>
+                  <span class="workout__unit">min/km</span>
+                </div>
+                <div class="workout__details">
+                  <span class="workout__icon">🦶🏼</span>
+                  <span class="workout__value">${workout.cadence}</span>
+                  <span class="workout__unit">spm</span>
+                </div>
+              </li>`;
+      } else if (workout.type === "Cycling") {
+        html = `<li class="workout workout--cycling" data-id=${workout.id}>
+            <h2 class="workout__title">${workout.description}</h2>
+            <div class="workout__details">
+              <span class="workout__icon">🚴‍♀️</span>
+              <span class="workout__value">${workout.distance}</span>
+              <span class="workout__unit">km</span>
+            </div>
+            <div class="workout__details">
+              <span class="workout__icon">⏱</span>
+              <span class="workout__value">${workout.duration}</span>
+              <span class="workout__unit">min</span>
+            </div>
+            <div class="workout__details">
+              <span class="workout__icon">⚡️</span>
+              <span class="workout__value">${workout.speed}</span>
+              <span class="workout__unit">km/h</span>
+            </div>
+            <div class="workout__details">
+              <span class="workout__icon">⛰</span>
+              <span class="workout__value">${workout.elevation}</span>
+              <span class="workout__unit">m</span>
+            </div>
+          </li>`;
+      }
+      console.log(html);
+      form.insertAdjacentHTML("afterend", html);
+    }
   },
   function () {
     alert("Could not get position.");
@@ -135,8 +205,7 @@ form.addEventListener("submit", function (e) {
   }
 
   workouts.push(workout); // add latest workout to array
-  //Testing 4.4
-  console.log(workouts);
+  console.log(workouts); //Testing 4.4
 
   //Task 7.1 Local Storage of Workouts Array
   localStorage.setItem("workouts", JSON.stringify(workouts));
