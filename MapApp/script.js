@@ -76,9 +76,9 @@ class Cycling extends Workout {
 }
 
 //Task 4.3  Testing Workout classes
-const run1 = new Running([39, -12], 5.2, 24, 178);
-const cycling1 = new Cycling([39, -12], 27, 95, 523);
-console.log(run1, cycling1);
+// const run1 = new Running([39, -12], 5.2, 24, 178);
+// const cycling1 = new Cycling([39, -12], 27, 95, 523);
+// console.log(run1, cycling1);
 
 navigator.geolocation.getCurrentPosition(
   function (position) {
@@ -115,7 +115,8 @@ navigator.geolocation.getCurrentPosition(
     //// Render workout in sidebar for user ////
     let html;
     for (let workout of workouts) {
-      // let d = new Date();
+      let lat = workout.coords[0]; //lat and lng of each workout needed to display the marker
+      let lng = workout.coords[1];
 
       if (workout.type === "Running") {
         html = `<li class="workout workout--running" data-id=${workout.id}>
@@ -141,6 +142,21 @@ navigator.geolocation.getCurrentPosition(
                   <span class="workout__unit">spm</span>
                 </div>
               </li>`;
+
+        // Display the map marker for each workout
+        L.marker([lat, lng])
+          .addTo(map)
+          .bindPopup(
+            L.popup({
+              maxWidth: 250,
+              minWidth: 100,
+              autoClose: false,
+              closeOnClick: false,
+              className: "running-popup",
+            })
+          )
+          .setPopupContent(`${workout.description}`)
+          .openPopup();
       } else if (workout.type === "Cycling") {
         html = `<li class="workout workout--cycling" data-id=${workout.id}>
             <h2 class="workout__title">${workout.description}</h2>
@@ -165,6 +181,22 @@ navigator.geolocation.getCurrentPosition(
               <span class="workout__unit">m</span>
             </div>
           </li>`;
+
+        // Display the map marker for each workout
+
+        L.marker([lat, lng])
+          .addTo(map)
+          .bindPopup(
+            L.popup({
+              maxWidth: 250,
+              minWidth: 100,
+              autoClose: false,
+              closeOnClick: false,
+              className: "cycling-popup",
+            })
+          )
+          .setPopupContent(`${workout.description}`)
+          .openPopup();
       }
       console.log(html);
       form.insertAdjacentHTML("afterend", html);
@@ -241,6 +273,21 @@ form.addEventListener("submit", function (e) {
                   <span class="workout__unit">spm</span>
                 </div>
               </li>`;
+
+    // Task 3.3 display map marker whenever form is submitted.
+    L.marker([lat, lng])
+      .addTo(map)
+      .bindPopup(
+        L.popup({
+          maxWidth: 250,
+          minWidth: 100,
+          autoClose: false,
+          closeOnClick: false,
+          className: "running-popup",
+        })
+      )
+      .setPopupContent(`${workout.description}`)
+      .openPopup();
   } else if (type === "cycling") {
     html = `<li class="workout workout--cycling" data-id=${workout.id}>
             <h2 class="workout__title">${workout.description}</h2>
@@ -265,25 +312,24 @@ form.addEventListener("submit", function (e) {
               <span class="workout__unit">m</span>
             </div>
           </li>`;
+
+    // Task 3.3 display map marker whenever form is submitted.
+    L.marker([lat, lng])
+      .addTo(map)
+      .bindPopup(
+        L.popup({
+          maxWidth: 250,
+          minWidth: 100,
+          autoClose: false,
+          closeOnClick: false,
+          className: "cycling-popup",
+        })
+      )
+      .setPopupContent(`${workout.description}`)
+      .openPopup();
   }
 
   form.insertAdjacentHTML("afterend", html);
-
-  // Task 3.3 display map marker whenever form is submitted.
-  L.marker([lat, lng])
-    .addTo(map)
-    .bindPopup(
-      L.popup({
-        maxWidth: 250,
-        minWidth: 100,
-        autoClose: false,
-        closeOnClick: false,
-        className: "running-popup",
-      })
-    )
-    .setPopupContent("Workout")
-    .openPopup();
-
   form.reset(); // Task 3.3 challenge - set input boxes back to default
   form.classList.add("hidden");
 });
@@ -309,4 +355,13 @@ containerWorkouts.addEventListener("click", function (e) {
       duration: 1,
     },
   });
+});
+
+//Extend - Cancel input
+form.addEventListener("keydown", function (event) {
+  if (event.key == "Escape") {
+    console.log("Esc key pressed.");
+    form.reset(); // Task 3.3 challenge - set input boxes back to default
+    form.classList.add("hidden");
+  }
 });
